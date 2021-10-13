@@ -1,4 +1,6 @@
 const { response } = require('express');
+const Usuario = require( '../models/usuario' );
+
 
 const usuariosSalonesGet = (req=request,res=response) => {
     const {salon, fecha, usuario} = req.query;
@@ -14,11 +16,16 @@ const usuariosSalonesPut = (req=request,res=response) => {
         golden, platinum 
     });
 }
-const usuariosSalonesPost = (req=request,res=response) => {
-    const {golden , platinum} = req.body;
+const usuariosSalonesPost = async (req=request,res=response) => {
+    const body = req.body;
+    const usuario = new Usuario(body);
+    
+    await usuario.save();
+
+
     res.json({
         msg: 'Solicitud POST a salones, controlador',
-        golden, platinum 
+        usuario, 
     });   
 }
 const usuariosSalonesDelete = (req=request,res=response) => {

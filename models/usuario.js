@@ -21,9 +21,13 @@ const UsuarioSchema = Schema({
         type: String,
         required: [true, 'La fecha es obligatoria']
     },
-    usuario: {
+    nombreusuario: {
         type: String,
         required: [true, 'El nombre de usuario es obligatorio']
+    },
+    contraseña: {
+        type: String,
+        required: [true, "La contraseña es obligatoria"]
     }
 
 });

@@ -1,11 +1,15 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
+
 const { validarCampos } = require('../middlewares/validar-campos');
+const { esSalonValido, esServicioValido } = require('../helpers/db-validators');
+
 const { usuariosSalonesGet, usuariosSalonesPut, usuariosSalonesPost, usuariosSalonesDelete, 
     usuariosComidaGet, usuariosComidaPut, usuariosComidaPost, usuariosComidaDelete,
     usuariosMusicaGet, usuariosMusicaPut, usuariosMusicaPost, usuariosMusicaDelete, 
     usuariosBartenderGet, usuariosBartenderPut, usuariosBartenderPost, usuariosBartenderDelete, 
     usuariosDecoracionesGet, usuariosDecoracionesPut, usuariosDecoracionesPost, usuariosDecoracionesDelete} = require('../controllers/usuarios');
+
 
 const router = Router();
 
@@ -13,8 +17,10 @@ router.get('/salones',   usuariosSalonesGet);
 router.put('/salones',   usuariosSalonesPut );
 router.post('/salones', [
     check('salon', 'El salón es obligatorio').not().isEmpty(),
-    check('salon', 'No es un salón válido').isIn(['golden','platinum','otro']),
-    check('servicio','El servicio no es válido').isIn(['salon','comida','musica','decoracion','bartender']),
+    check('salon').custom( esSalonValido ),
+    //    check('salon', 'No es un salón válido').isIn(['golden','platinum','otro']),
+    //      check('servicio','El servicio no es válido').isIn(['salon','comida','musica','decoracion','bartender']),
+    check('servicio').custom( esServicioValido ),
     check('fecha','No es una fecha correcta').isDate(),
     check('contraseña', 'La contraseña debe de ser más de 6 caracteres').isLength({min: 6}),
     check('precio', 'El precio debe ser un numero').isDecimal(),    

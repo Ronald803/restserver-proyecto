@@ -1,5 +1,6 @@
 const Salon = require('../models/salon');
 const Servicio = require('../models/servicio');
+const Usuario = require('../models/usuario');
 
 
 const esSalonValido = async (salon= '' ) => {
@@ -16,7 +17,14 @@ const esServicioValido = async (servicio= '' ) => {
     }
 }
 
+const existeReservaPorId = async (id) => {
+    const existeReserva = await Usuario.findById(id); 
+    if(!existeReserva) {
+        throw new Error(`El id no existe ${id}`);
+    }
+}
+
 
 module.exports = {
-    esSalonValido, esServicioValido
+    esSalonValido, esServicioValido, existeReservaPorId
 }

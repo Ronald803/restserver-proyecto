@@ -1,4 +1,4 @@
-const { response } = require('express');
+const { response, request } = require('express');
 const bcryptjs = require('bcryptjs');
 
 
@@ -12,38 +12,40 @@ const usuariosSalonesGet = (req=request,res=response) => {
         salon, fecha, usuario
     });
 }
-const usuariosSalonesPut = (req=request,res=response) => {
-    const {golden , platinum} = req.body;
+const usuariosSalonesPut = async (req=request,res=response) => {
+    const { id } = req.params;
+    const {_id,servicio , caracteristica, precio, ...resto} = req.body;
+    
+
+    const usuario = await Usuario.findByIdAndUpdate( id, resto );
     res.json({
         msg: 'Solicitud PUT a salones, controlador',
-        golden, platinum 
+        usuario, id 
     });
 }
 const usuariosSalonesPost = async (req=request,res=response) => {
-    
- 
-    
-    const {salon, servicio, caracteristica, precio, fecha, nombreusuario, contraseña } = req.body;
-    const usuario = new Usuario( {salon, servicio, caracteristica, precio, fecha, nombreusuario, contraseña} );
-    
-    //Verificar si está reservado
-    const existeFecha = await Usuario.findOne({ fecha,salon,servicio });
-    if ( existeFecha   ) {
-        return res.status(400).json({
-            msg: 'Esa fecha ya está apartada'
-        })
-    }  
-    //Encriptar la contraseña
-    const salt = bcryptjs.genSaltSync();
-    usuario.contraseña = bcryptjs.hashSync( contraseña, salt );
+            const {salon, servicio, caracteristica, precio, fecha, nombreusuario, contraseña } = req.body;
+            const usuario = new Usuario( {salon, servicio, caracteristica, precio, fecha, nombreusuario, contraseña} );
 
-    await usuario.save();
-
-
-    res.json({
-        msg: 'Solicitud POST a salones, controlador',
-        usuario, 
-    });   
+            //Verificar si está reservado
+            const existeFecha = await Usuario.findOne({ fecha,salon,servicio });
+            if ( existeFecha   ) {
+                return res.status(400).json({
+                    msg: 'Esa fecha ya está apartada'
+                })
+            }  
+            //Encriptar la contraseña
+            const salt = bcryptjs.genSaltSync();
+            usuario.contraseña = bcryptjs.hashSync( contraseña, salt );
+        
+            //Guardar en BD
+            await usuario.save();
+        
+        
+            res.json({
+                msg: 'Solicitud POST a salones, controlador',
+                usuario, 
+            });   
 }
 const usuariosSalonesDelete = (req=request,res=response) => {
     const {golden , platinum} = req.body;

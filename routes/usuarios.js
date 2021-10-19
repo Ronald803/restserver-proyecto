@@ -2,7 +2,7 @@ const { Router } = require('express');
 const { check } = require('express-validator');
 
 const { validarCampos } = require('../middlewares/validar-campos');
-const { esSalonValido, esServicioValido } = require('../helpers/db-validators');
+const { esSalonValido, esServicioValido, existeReservaPorId } = require('../helpers/db-validators');
 
 const { usuariosSalonesGet, usuariosSalonesPut, usuariosSalonesPost, usuariosSalonesDelete, 
     usuariosComidaGet, usuariosComidaPut, usuariosComidaPost, usuariosComidaDelete,
@@ -12,9 +12,12 @@ const { usuariosSalonesGet, usuariosSalonesPut, usuariosSalonesPost, usuariosSal
 
 
 const router = Router();
-
 router.get('/salones',   usuariosSalonesGet);
-router.put('/salones',   usuariosSalonesPut );
+router.put('/salones/:id',[
+    check('id', 'No es un ID válido').isMongoId(),
+    check('id').custom( existeReservaPorId ),
+    validarCampos
+],usuariosSalonesPut );
 router.post('/salones', [
     check('salon', 'El salón es obligatorio').not().isEmpty(),
     check('salon').custom( esSalonValido ),

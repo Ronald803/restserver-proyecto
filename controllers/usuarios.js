@@ -5,23 +5,29 @@ const bcryptjs = require('bcryptjs');
 const Usuario = require( '../models/usuario' );
 
 
-const usuariosSalonesGet = (req=request,res=response) => {
-    const {salon, fecha, usuario} = req.query;
-    res.json({
-        msg: 'Solicitud GET a salones, controlador',
-        salon, fecha, usuario
-    });
+const usuariosSalonesGet = async (req=request,res=response) => {
+            const{limite=5, desde=0, fecha} = req.query;
+            const [total, usuarios] = await Promise.all([
+                Usuario.countDocuments({fecha}),
+                Usuario.find({fecha })
+                .limit(Number(limite))
+                .skip(Number(desde))
+            ])
+            res.json({
+                total,
+                usuarios,
+            });
 }
 const usuariosSalonesPut = async (req=request,res=response) => {
-    const { id } = req.params;
-    const {_id,servicio , caracteristica, precio, ...resto} = req.body;
-    
+            const { id } = req.params;
+            const {_id,servicio , caracteristica, precio, ...resto} = req.body;
+            
 
-    const usuario = await Usuario.findByIdAndUpdate( id, resto );
-    res.json({
-        msg: 'Solicitud PUT a salones, controlador',
-        usuario, id 
-    });
+            const usuario = await Usuario.findByIdAndUpdate( id, resto );
+            res.json({
+                msg: 'Solicitud PUT a salones, controlador',
+                usuario, id 
+            });
 }
 const usuariosSalonesPost = async (req=request,res=response) => {
             const {salon, servicio, caracteristica, precio, fecha, nombreusuario, contraseña } = req.body;
@@ -47,11 +53,12 @@ const usuariosSalonesPost = async (req=request,res=response) => {
                 usuario, 
             });   
 }
-const usuariosSalonesDelete = (req=request,res=response) => {
-    const {golden , platinum} = req.body;
+const usuariosSalonesDelete = async (req=request,res=response) => {
+    const {id} = req.params;
+    const usuario = await Usuario.findByIdAndUpdate(id,{caracteristica:"eliminado"});
     res.json({
         msg: 'Solicitud DELETE a salones, controlador',
-        golden, platinum 
+        usuario
     });
 }
 

@@ -21,15 +21,17 @@ router.put('/salones/:id',[
 router.post('/salones', [
     check('salon', 'El salón es obligatorio').not().isEmpty(),
     check('salon').custom( esSalonValido ),
-    //    check('salon', 'No es un salón válido').isIn(['golden','platinum','otro']),
-    //      check('servicio','El servicio no es válido').isIn(['salon','comida','musica','decoracion','bartender']),
     check('servicio').custom( esServicioValido ),
     check('fecha','No es una fecha correcta').isDate(),
     check('contraseña', 'La contraseña debe de ser más de 6 caracteres').isLength({min: 6}),
     check('precio', 'El precio debe ser un numero').isDecimal(),    
     validarCampos
 ],usuariosSalonesPost );
-router.delete('/salones',usuariosSalonesDelete );
+router.delete('/salones/:id',[
+    check('id', 'No es un ID válido').isMongoId(),
+    check('id').custom( existeReservaPorId ),
+    validarCampos
+],usuariosSalonesDelete );
 
 
 

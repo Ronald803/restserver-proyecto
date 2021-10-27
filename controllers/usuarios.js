@@ -3,7 +3,8 @@ const bcryptjs = require('bcryptjs');
 
 
 const Usuario = require( '../models/usuario' );
-
+const Servicio = require( '../models/servicio');
+const Comida = require( '../models/comida');
 
 const usuariosSalonesGet = async (req=request,res=response) => {
             const{limite=5, desde=0, fecha} = req.query;
@@ -17,7 +18,7 @@ const usuariosSalonesGet = async (req=request,res=response) => {
                 total,
                 usuarios,
             });
-}
+}   
 const usuariosSalonesPut = async (req=request,res=response) => {
             const { id } = req.params;
             const {_id,servicio , caracteristica, precio, ...resto} = req.body;
@@ -77,12 +78,31 @@ const usuariosComidaPut = (req=request,res=response) => {
             golden, platinum, externo
     });
 }
-const usuariosComidaPost= (req=request,res=response) => {
-    const { golden, platinum, externo } = req.body;
+const usuariosComidaPost= async(req=request,res=response) => {
+    const {salon, servicio, caracteristica, precio, fecha, nombreusuario, contraseña } = req.body;
+    const comida = new Comida( {salon, servicio, caracteristica, precio, fecha, nombreusuario, contraseña} );
+    //Verificar si el Post es a la base de datos del servicio correcto
+    if ( servicio != "comida"){ 
+        return res.status(400).json({
+            msg: 'Peticion post debe ser a servicio comida'
+        })
+    }
+    //Verificar si está reservado
+    const existeFecha = await Comida.findOne({ fecha,salon,servicio });
+    if ( existeFecha ) {
+        return res.status(400).json({
+            msg: 'Esa fecha ya está apartada'
+        })
+    }  
+    //Encriptar la contraseña
+    const salt = bcryptjs.genSaltSync();
+    comida.contraseña = bcryptjs.hashSync( contraseña, salt );
+    //Guardar en BD
+    await comida.save();
     res.json({
-            msg: 'Solicitud POST a comida, controlador',
-            golden, platinum, externo
-    });
+        msg: 'Solicitud POST a Comida, controlador',
+        comida, 
+    });    
 }
 const usuariosComidaDelete = (req=request,res=response) => {
     const { golden, platinum, externo } = req.body;

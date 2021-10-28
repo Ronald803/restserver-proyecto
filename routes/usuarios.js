@@ -8,10 +8,8 @@ const { usuariosSalonesGet,     usuariosSalonesPut,     usuariosSalonesPost,    
         usuariosComidaGet,      usuariosComidaPut,      usuariosComidaPost,         usuariosComidaDelete,
         usuariosMusicaGet,      usuariosMusicaPut,      usuariosMusicaPost,         usuariosMusicaDelete, 
         usuariosBartenderGet,   usuariosBartenderPut,   usuariosBartenderPost,      usuariosBartenderDelete, 
-        usuariosDecoracionesGet,usuariosDecoracionesPut,usuariosDecoracionesPost,   usuariosDecoracionesDelete} = require('../controllers/usuarios');
-////////////////////////////////////////////
-/////////////Peticiones a Salones///////////
-////////////////////////////////////////////
+        usuariosDecoracionGet,usuariosDecoracionPut,usuariosDecoracionPost,   usuariosDecoracionDelete} = require('../controllers/usuarios');
+
 const router = Router();
 const verificacionDatos = [
     check('salon', 'El salón es obligatorio').not().isEmpty(),
@@ -22,6 +20,9 @@ const verificacionDatos = [
     check('precio', 'El precio debe ser un numero').isDecimal(),    
     validarCampos
 ];
+////////////////////////////////////////////
+/////////////Peticiones a Salones///////////
+////////////////////////////////////////////
 router.get('/salones',   usuariosSalonesGet);
 router.put('/salones/:id',[
     check('id', 'No es un ID válido').isMongoId(),
@@ -46,21 +47,21 @@ router.delete('/comida',usuariosComidaDelete);
 ////////////////////////////////////////////
 router.get('/musica',   usuariosMusicaGet);
 router.put('/musica',   usuariosMusicaPut);
-router.post('/musica',  usuariosMusicaPost);
+router.post('/musica', verificacionDatos, usuariosMusicaPost);
 router.delete('/musica',usuariosMusicaDelete);
 ////////////////////////////////////////////
 /////////////Peticiones a Bartender/////////
 ////////////////////////////////////////////
 router.get('/bartender',   usuariosBartenderGet);
 router.put('/bartender',   usuariosBartenderPut);
-router.post('/bartender',  usuariosBartenderPost);
+router.post('/bartender', verificacionDatos, usuariosBartenderPost);
 router.delete('/bartender',usuariosBartenderDelete);
 ////////////////////////////////////////////
 ///////////Peticiones a Decoraciones////////
 ////////////////////////////////////////////
-router.get('/decoraciones',   usuariosDecoracionesGet);
-router.put('/decoraciones',   usuariosDecoracionesPut);
-router.post('/decoraciones',  usuariosDecoracionesPost);
-router.delete('/decoraciones',usuariosDecoracionesDelete);
+router.get('/decoracion',   usuariosDecoracionGet);
+router.put('/decoracion',   usuariosDecoracionPut);
+router.post('/decoracion',  verificacionDatos, usuariosDecoracionPost);
+router.delete('/decoracion',usuariosDecoracionDelete);
 
 module.exports = router;

@@ -5,6 +5,9 @@ const bcryptjs = require('bcryptjs');
 const Usuario = require( '../models/usuario' );
 const Servicio = require( '../models/servicio');
 const Comida = require( '../models/comida');
+const Musica = require('../models/musica');
+const Bartender = require('../models/bartender');
+const Decoracion = require('../models/decoracion');
 
 const usuariosSalonesGet = async (req=request,res=response) => {
             const{limite=5, desde=0, fecha} = req.query;
@@ -127,11 +130,27 @@ const usuariosMusicaPut = (req=request,res=response) => {
             golden, platinum, externo
     });
 }
-const usuariosMusicaPost = (req=request,res=response) => {
-    const { golden, platinum, externo } = req.body;
+const usuariosMusicaPost = async (req=request,res=response) => {
+    const {salon, servicio, caracteristica, precio, fecha, nombreusuario, contraseña } = req.body;
+    const musica = new Musica( {salon, servicio, caracteristica, precio, fecha, nombreusuario, contraseña} );
+    if ( servicio != "musica"){ 
+        return res.status(400).json({
+            msg: 'Peticion post debe ser a servicio musica'
+        })
+    }
+    //Verificar si está reservado
+    const existeFecha = await Musica.findOne({ fecha,salon,servicio });
+    if ( existeFecha ) {
+        return res.status(400).json({
+            msg: 'Esa fecha ya está apartada'
+        })
+    }
+    //Guardar en BD
+        await musica.save();
+   
     res.json({
             msg: 'Solicitud POST a musica, controlador',
-            golden, platinum, externo
+            musica
     });
 }
 const usuariosMusicaDelete = (req=request,res=response) => {
@@ -157,11 +176,27 @@ const usuariosBartenderPut = (req=request,res=response) => {
             golden, platinum, externo
     });
 }
-const usuariosBartenderPost = (req=request,res=response) => {
-    const { golden, platinum, externo } = req.body;
+const usuariosBartenderPost = async (req=request,res=response) => {
+    const {salon, servicio, caracteristica, precio, fecha, nombreusuario, contraseña } = req.body;
+    const bartender = new Bartender( {salon, servicio, caracteristica, precio, fecha, nombreusuario, contraseña} );
+    if ( servicio != "bartender"){ 
+        return res.status(400).json({
+            msg: 'Peticion post debe ser a servicio bartender'
+        })
+    }
+    //Verificar si está reservado
+    const existeFecha = await Bartender.findOne({ fecha,salon,servicio });
+    if ( existeFecha ) {
+        return res.status(400).json({
+            msg: 'Esa fecha ya está apartada'
+        })
+    }
+    //Guardar en BD
+        await bartender.save();
+   
     res.json({
-            msg: 'Solicitud POST a bartender, controlador',
-            golden, platinum, externo
+            msg: 'Solicitud POST a musica, controlador',
+            bartender
     });
 }
 const usuariosBartenderDelete = (req=request,res=response) => {
@@ -173,28 +208,45 @@ const usuariosBartenderDelete = (req=request,res=response) => {
 }
 
 
-const usuariosDecoracionesGet = (req=request,res=response) => {
+const usuariosDecoracionGet = (req=request,res=response) => {
     const {salon, fecha, usuario} = req.query;
     res.json({
             msg: 'Solicitud GET a decoraciones, controlador',
             salon, fecha, usuario
     });
 }
-const usuariosDecoracionesPut = (req=request,res=response) => {
+const usuariosDecoracionPut = (req=request,res=response) => {
     const { golden, platinum, externo } = req.body;
     res.json({
             msg: 'Solicitud PUT a decoraciones, controlador',
             golden, platinum, externo
     });
 }
-const usuariosDecoracionesPost = (req=request,res=response) => {
-    const { golden, platinum, externo } = req.body;
+const usuariosDecoracionPost = async (req=request,res=response) => {
+    const {salon, servicio, caracteristica, precio, fecha, nombreusuario, contraseña } = req.body;
+    const decoracion = new Decoracion( {salon, servicio, caracteristica, precio, fecha, nombreusuario, contraseña} );
+    if ( servicio != "decoracion"){ 
+        return res.status(400).json({
+            msg: 'Peticion post debe ser a servicio decoracion'
+        })
+    }
+    //Verificar si está reservado
+    const existeFecha = await Decoracion.findOne({ fecha,salon,servicio });
+    if ( existeFecha ) {
+        return res.status(400).json({
+            msg: 'Esa fecha ya está apartada'
+        })
+    }
+    //Guardar en BD
+        await decoracion.save();
+   
     res.json({
-            msg: 'Solicitud POST a decoraciones, controlador',
-            golden, platinum, externo
+            msg: 'Solicitud POST a musica, controlador',
+            decoracion
     });
 }
-const usuariosDecoracionesDelete = (req=request,res=response) => {
+
+const usuariosDecoracionDelete = (req=request,res=response) => {
     const { golden, platinum, externo } = req.body;
     res.json({
             msg: 'Solicitud DELETE a decoraciones, controlador',
@@ -225,9 +277,9 @@ module.exports = {
     usuariosComidaPut,
     usuariosComidaDelete,
 
-    usuariosDecoracionesGet,
-    usuariosDecoracionesPost,
-    usuariosDecoracionesPut,
-    usuariosDecoracionesDelete
+    usuariosDecoracionGet,
+    usuariosDecoracionPost,
+    usuariosDecoracionPut,
+    usuariosDecoracionDelete
 
 }

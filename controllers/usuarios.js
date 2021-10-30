@@ -67,11 +67,17 @@ const usuariosSalonesDelete = async (req=request,res=response) => {
 }
 
 
-const usuariosComidaGet = (req=request,res=response) => {
-    const {salon, fecha, usuario } = req.query;
+const usuariosComidaGet = async (req=request,res=response) => {
+    const{limite=5, desde=0, fecha} = req.query;
+    const [total, comidas] = await Promise.all([
+        Comida.countDocuments({fecha}),
+        Comida.find({fecha })
+        .limit(Number(limite))
+        .skip(Number(desde))
+    ])
     res.json({
-            msg: 'Solicitud GET a comida, controlador',
-            salon, fecha, usuario
+        total,
+        comidas,
     });
 }
 const usuariosComidaPut = (req=request,res=response) => {
@@ -116,11 +122,17 @@ const usuariosComidaDelete = (req=request,res=response) => {
 }
 
 
-const usuariosMusicaGet = (req=request,res=response) => {
-    const {salon, fecha, usuario} = req.query;
+const usuariosMusicaGet = async (req=request,res=response) => {
+    const{limite=5, desde=0, fecha} = req.query;
+    const [total, musica] = await Promise.all([
+        Musica.countDocuments({fecha}),
+        Musica.find({fecha })
+        .limit(Number(limite))
+        .skip(Number(desde))
+    ])
     res.json({
-            msg: 'Solicitud GET a musica, controlador',
-            salon, fecha, usuario
+        total,
+        musica,
     });
 }
 const usuariosMusicaPut = (req=request,res=response) => {
@@ -162,11 +174,17 @@ const usuariosMusicaDelete = (req=request,res=response) => {
 }
 
 
-const usuariosBartenderGet = (req=request,res=response) => {
-    const { salon, fecha, usuario} = req.query;
+const usuariosBartenderGet = async(req=request,res=response) => {
+    const{limite=5, desde=0, fecha} = req.query;
+    const [total, bartender] = await Promise.all([
+        Bartender.countDocuments({fecha}),
+        Bartender.find({fecha })
+        .limit(Number(limite))
+        .skip(Number(desde))
+    ])
     res.json({
-            msg: 'Solicitud GET a bartender, controlador',
-            salon,fecha,usuario
+        total,
+        bartender,
     });
 }
 const usuariosBartenderPut = (req=request,res=response) => {
@@ -208,11 +226,17 @@ const usuariosBartenderDelete = (req=request,res=response) => {
 }
 
 
-const usuariosDecoracionGet = (req=request,res=response) => {
-    const {salon, fecha, usuario} = req.query;
+const usuariosDecoracionGet = async (req=request,res=response) => {
+    const{limite=5, desde=0, fecha} = req.query;
+    const [total, decoracion] = await Promise.all([
+        Decoracion.countDocuments({fecha}),
+        Decoracion.find({fecha })
+        .limit(Number(limite))
+        .skip(Number(desde))
+    ])
     res.json({
-            msg: 'Solicitud GET a decoraciones, controlador',
-            salon, fecha, usuario
+        total,
+        decoracion,
     });
 }
 const usuariosDecoracionPut = (req=request,res=response) => {

@@ -23,10 +23,9 @@ const usuariosSalonesGet = async (req=request,res=response) => {
             });
 }   
 const usuariosSalonesPut = async (req=request,res=response) => {
+    console.log("peticion a put salones");
             const { id } = req.params;
             const {_id,servicio , caracteristica, precio, ...resto} = req.body;
-            
-
             const usuario = await Usuario.findByIdAndUpdate( id, resto );
             res.json({
                 msg: 'Solicitud PUT a salones, controlador',
@@ -80,11 +79,13 @@ const usuariosComidaGet = async (req=request,res=response) => {
         comidas,
     });
 }
-const usuariosComidaPut = (req=request,res=response) => {
-    const { golden, platinum, externo } = req.body;
+const usuariosComidaPut = async (req=request,res=response) => {
+    const { id } = req.params;
+    const {_id,servicio , caracteristica, precio, ...resto} = req.body;
+    const comida = await Comida.findByIdAndUpdate( id, resto );
     res.json({
-            msg: 'Solicitud PUT a comida, controlador',
-            golden, platinum, externo
+        msg: 'Solicitud PUT a comida, controlador',
+        comida, id 
     });
 }
 const usuariosComidaPost= async(req=request,res=response) => {
@@ -135,11 +136,13 @@ const usuariosMusicaGet = async (req=request,res=response) => {
         musica,
     });
 }
-const usuariosMusicaPut = (req=request,res=response) => {
-    const { golden, platinum, externo } = req.body;
+const usuariosMusicaPut = async (req=request,res=response) => {
+    const { id } = req.params;
+    const {_id,servicio , caracteristica, precio, ...resto} = req.body;
+    const musica = await Musica.findByIdAndUpdate( id, resto );
     res.json({
-            msg: 'Solicitud PUT a musica, controlador',
-            golden, platinum, externo
+        msg: 'Solicitud PUT a musica, controlador',
+        musica, id 
     });
 }
 const usuariosMusicaPost = async (req=request,res=response) => {
@@ -187,11 +190,13 @@ const usuariosBartenderGet = async(req=request,res=response) => {
         bartender,
     });
 }
-const usuariosBartenderPut = (req=request,res=response) => {
-    const { golden, platinum, externo } = req.body;
+const usuariosBartenderPut = async (req=request,res=response) => {
+    const { id } = req.params;
+    const {_id,servicio , caracteristica, precio, ...resto} = req.body;
+    const bartender = await Bartender.findByIdAndUpdate( id, resto );
     res.json({
-            msg: 'Solicitud PUT a bartender, controlador',
-            golden, platinum, externo
+        msg: 'Solicitud PUT a bartender, controlador',
+        bartender, id 
     });
 }
 const usuariosBartenderPost = async (req=request,res=response) => {
@@ -239,11 +244,13 @@ const usuariosDecoracionGet = async (req=request,res=response) => {
         decoracion,
     });
 }
-const usuariosDecoracionPut = (req=request,res=response) => {
-    const { golden, platinum, externo } = req.body;
+const usuariosDecoracionPut = async (req=request,res=response) => {
+    const { id } = req.params;
+    const {_id,servicio , caracteristica, precio, ...resto} = req.body;
+    const decoracion = await Decoracion.findByIdAndUpdate( id, resto );
     res.json({
-            msg: 'Solicitud PUT a decoraciones, controlador',
-            golden, platinum, externo
+        msg: 'Solicitud PUT a decoracion, controlador',
+        decoracion, id 
     });
 }
 const usuariosDecoracionPost = async (req=request,res=response) => {

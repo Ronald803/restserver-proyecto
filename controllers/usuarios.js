@@ -114,11 +114,12 @@ const usuariosComidaPost= async(req=request,res=response) => {
         comida, 
     });    
 }
-const usuariosComidaDelete = (req=request,res=response) => {
-    const { golden, platinum, externo } = req.body;
+const usuariosComidaDelete = async (req=request,res=response) => {
+    const {id} = req.params;
+    const comida = await Comida.findByIdAndUpdate(id,{caracteristica:"eliminado"});
     res.json({
-            msg: 'Solicitud DELETE a comida, controlador',
-            golden, platinum, externo
+        msg: 'Solicitud DELETE a comida, controlador',
+        comida
     });
 }
 
@@ -168,11 +169,12 @@ const usuariosMusicaPost = async (req=request,res=response) => {
             musica
     });
 }
-const usuariosMusicaDelete = (req=request,res=response) => {
-    const { golden, platinum, externo } = req.body;
+const usuariosMusicaDelete = async (req=request,res=response) => {
+    const {id} = req.params;
+    const musica = await Musica.findByIdAndUpdate(id,{caracteristica:"eliminado"});
     res.json({
-            msg: 'Solicitud DELETE a musica, controlador',
-            golden, platinum, externo
+        msg: 'Solicitud DELETE a musica, controlador',
+        musica
     });
 }
 
@@ -222,11 +224,12 @@ const usuariosBartenderPost = async (req=request,res=response) => {
             bartender
     });
 }
-const usuariosBartenderDelete = (req=request,res=response) => {
-    const { golden, platinum, externo } = req.body;
+const usuariosBartenderDelete = async (req=request,res=response) => {
+    const {id} = req.params;
+    const bartender = await Bartender.findByIdAndUpdate(id,{caracteristica:"eliminado"});
     res.json({
-            msg: 'Solicitud DELETE a bartender, controlador',
-            golden, platinum, externo
+        msg: 'Solicitud DELETE a musica, controlador',
+        bartender
     });
 }
 
@@ -276,12 +279,12 @@ const usuariosDecoracionPost = async (req=request,res=response) => {
             decoracion
     });
 }
-
-const usuariosDecoracionDelete = (req=request,res=response) => {
-    const { golden, platinum, externo } = req.body;
+const usuariosDecoracionDelete = async (req=request,res=response) => {
+    const {id} = req.params;
+    const decoracion = await Decoracion.findByIdAndUpdate(id,{caracteristica:"eliminado"});
     res.json({
-            msg: 'Solicitud DELETE a decoraciones, controlador',
-            golden, platinum, externo
+        msg: 'Solicitud DELETE a musica, controlador',
+        decoracion
     });
 }
 

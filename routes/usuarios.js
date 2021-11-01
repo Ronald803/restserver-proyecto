@@ -47,7 +47,11 @@ router.put('/comida/:id',[
     validarCampos
 ],   usuariosComidaPut);
 router.post('/comida', verificacionDatos, usuariosComidaPost);
-router.delete('/comida',usuariosComidaDelete);
+router.delete('/comida/:id',[
+    check('id', 'No es un ID válido').isMongoId(),
+    check('id').custom( existeReservaComidaPorId ),
+    validarCampos
+],usuariosComidaDelete);
 ////////////////////////////////////////////
 /////////////Peticiones a Música////////////
 ////////////////////////////////////////////
@@ -58,7 +62,11 @@ router.put('/musica/:id',[
     validarCampos     
 ], usuariosMusicaPut);
 router.post('/musica', verificacionDatos, usuariosMusicaPost);
-router.delete('/musica',usuariosMusicaDelete);
+router.delete('/musica/:id',[
+    check('id', 'No es un ID válido').isMongoId(),
+    check('id').custom( existeReservaMusicaPorId ),
+    validarCampos
+],usuariosMusicaDelete);
 ////////////////////////////////////////////
 /////////////Peticiones a Bartender/////////
 ////////////////////////////////////////////
@@ -69,7 +77,11 @@ router.put('/bartender/:id',[
     validarCampos     
 ],   usuariosBartenderPut);
 router.post('/bartender', verificacionDatos, usuariosBartenderPost);
-router.delete('/bartender',usuariosBartenderDelete);
+router.delete('/bartender/:id',[
+    check('id', 'No es un ID válido').isMongoId(),
+    check('id').custom( existeReservaBartenderPorId ),
+    validarCampos
+],usuariosBartenderDelete);
 ////////////////////////////////////////////
 ///////////Peticiones a Decoraciones////////
 ////////////////////////////////////////////
@@ -80,6 +92,10 @@ router.put('/decoracion/:id',[
     validarCampos  
 ],   usuariosDecoracionPut);
 router.post('/decoracion',  verificacionDatos, usuariosDecoracionPost);
-router.delete('/decoracion',usuariosDecoracionDelete);
+router.delete('/decoracion/:id',[
+    check('id', 'No es un ID válido').isMongoId(),
+    check('id').custom( existeReservaDecoracionPorId ),
+    validarCampos
+],usuariosDecoracionDelete);
 
 module.exports = router;

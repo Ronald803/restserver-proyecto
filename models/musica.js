@@ -14,6 +14,12 @@ const MusicaSchema = Schema({
     caracteristica: {
         type: String,
     },
+    evento: {
+        type: String,
+    },
+    grupo: {
+        type: String,
+    },
     precio: {
         type: Number,
     },

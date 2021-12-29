@@ -14,6 +14,15 @@ const ComidaSchema = Schema({
     caracteristica: {
         type: String,
     },
+    evento: {
+        type: String,
+    },
+    plato: {
+        type: String,
+    },
+    invitados: {
+        type: Number,
+    },
     precio: {
         type: Number,
     },

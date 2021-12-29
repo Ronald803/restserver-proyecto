@@ -8,64 +8,117 @@ const Comida = require( '../models/comida');
 const Musica = require('../models/musica');
 const Bartender = require('../models/bartender');
 const Decoracion = require('../models/decoracion');
+const Salon = require('../models/salon');
+////////////////////////////solicitudes usuario//////////////////////////////////
+const usuariosGet = async (req=request,res=response) => {
+    const{limite=5, desde=0, nombreusuario} = req.query;
+    const [total, usuarios] = await Promise.all([
+        Usuario.countDocuments({nombreusuario}),
+        Usuario.find({nombreusuario})
+        .limit(Number(limite))
+        .skip(Number(desde))
+    ])
+    res.json({
+        total,
+        usuarios,
+    });
+}   
+const usuariosPut = async (req=request,res=response) => {
+console.log("peticion a put usuarios");
+    const { id } = req.params;
+    const {_id,contraseña, rol, ...resto} = req.body;
+    const salon = await Usuario.findByIdAndUpdate( id, resto );
+    res.json({
+        msg: 'Solicitud PUT a salones, controlador',
+        salon, id 
+    });
+}
+const usuariosPost = async (req=request,res=response) => {
+   const {nombreusuario, contraseña, correo, celular, caracteristica, rol } = req.body;
+    const usuario = new Usuario( {nombreusuario, contraseña, correo, celular, caracteristica, rol} );
+    //Encriptar la contraseña
+    const salt = bcryptjs.genSaltSync();
+    usuario.contraseña = bcryptjs.hashSync( contraseña, salt );
 
+   //Guardar en BD
+    await usuario.save();
+
+    res.json({
+        msg: 'Solicitud POST a usuario',
+        usuario, 
+    });   
+}
+const usuariosDelete = async (req=request,res=response) => {
+    const {id} = req.params;
+    const usuario = await Usuario.findByIdAndUpdate(id,{caracteristica:"eliminado"});
+    res.json({
+        msg: 'Solicitud DELETE a salones, controlador',
+        usuario
+        });
+    }
+///////////////////////////solicitudes salones///////////////////////////////////
 const usuariosSalonesGet = async (req=request,res=response) => {
             const{limite=5, desde=0, fecha} = req.query;
-            const [total, usuarios] = await Promise.all([
-                Usuario.countDocuments({fecha}),
-                Usuario.find({fecha })
+            const [total, salons] = await Promise.all([
+                Salon.countDocuments({fecha}),
+                Salon.find({fecha })
                 .limit(Number(limite))
                 .skip(Number(desde))
             ])
             res.json({
                 total,
-                usuarios,
+                salons,
             });
 }   
 const usuariosSalonesPut = async (req=request,res=response) => {
     console.log("peticion a put salones");
             const { id } = req.params;
             const {_id,servicio , caracteristica, precio, ...resto} = req.body;
-            const usuario = await Usuario.findByIdAndUpdate( id, resto );
+            const salon = await Salon.findByIdAndUpdate( id, resto );
             res.json({
                 msg: 'Solicitud PUT a salones, controlador',
-                usuario, id 
+                salon, id 
             });
 }
 const usuariosSalonesPost = async (req=request,res=response) => {
-            const {salon, servicio, caracteristica, precio, fecha, nombreusuario, contraseña } = req.body;
-            const usuario = new Usuario( {salon, servicio, caracteristica, precio, fecha, nombreusuario, contraseña} );
+            const {salon, servicio, caracteristica, evento, precio, fecha, nombreusuario, contraseña } = req.body;
+            const sssalon = new Salon( {salon, servicio, caracteristica, evento, precio, fecha, nombreusuario, contraseña} );
 
             //Verificar si está reservado
-            const existeFecha = await Usuario.findOne({ fecha,salon,servicio });
+            const existeFecha = await Salon.findOne({ fecha,salon,servicio });
             if ( existeFecha   ) {
                 return res.status(400).json({
                     msg: 'Esa fecha ya está apartada'
                 })
             }  
+            //Verificar si el Post es a la base de datos del servicio correcto
+            if ( servicio != "salon"){ 
+                return res.status(400).json({
+                    msg: 'Peticion post debe ser a servicio salon'
+                })
+            }
             //Encriptar la contraseña
             const salt = bcryptjs.genSaltSync();
-            usuario.contraseña = bcryptjs.hashSync( contraseña, salt );
+            sssalon.contraseña = bcryptjs.hashSync( contraseña, salt );
         
             //Guardar en BD
-            await usuario.save();
+            await sssalon.save();
         
         
             res.json({
                 msg: 'Solicitud POST a salones, controlador',
-                usuario, 
+                sssalon, 
             });   
 }
 const usuariosSalonesDelete = async (req=request,res=response) => {
     const {id} = req.params;
-    const usuario = await Usuario.findByIdAndUpdate(id,{caracteristica:"eliminado"});
+    const salon = await Salon.findByIdAndUpdate(id,{caracteristica:"eliminado"});
     res.json({
         msg: 'Solicitud DELETE a salones, controlador',
-        usuario
+        salon
     });
 }
-
-
+//////////////////////////solicitudes comida////////////////////////////////////
 const usuariosComidaGet = async (req=request,res=response) => {
     const{limite=5, desde=0, fecha} = req.query;
     const [total, comidas] = await Promise.all([
@@ -89,21 +142,21 @@ const usuariosComidaPut = async (req=request,res=response) => {
     });
 }
 const usuariosComidaPost= async(req=request,res=response) => {
-    const {salon, servicio, caracteristica, precio, fecha, nombreusuario, contraseña } = req.body;
-    const comida = new Comida( {salon, servicio, caracteristica, precio, fecha, nombreusuario, contraseña} );
+    const {salon, servicio, caracteristica, evento, plato, invitados, precio, fecha, nombreusuario, contraseña } = req.body;
+    const comida = new Comida( {salon, servicio, caracteristica, evento, plato, invitados, precio, fecha, nombreusuario, contraseña} );
     //Verificar si el Post es a la base de datos del servicio correcto
     if ( servicio != "comida"){ 
         return res.status(400).json({
             msg: 'Peticion post debe ser a servicio comida'
         })
     }
-    //Verificar si está reservado
+/*    //Verificar si está reservado
     const existeFecha = await Comida.findOne({ fecha,salon,servicio });
     if ( existeFecha ) {
         return res.status(400).json({
             msg: 'Esa fecha ya está apartada'
         })
-    }  
+    }    */
     //Encriptar la contraseña
     const salt = bcryptjs.genSaltSync();
     comida.contraseña = bcryptjs.hashSync( contraseña, salt );
@@ -122,8 +175,7 @@ const usuariosComidaDelete = async (req=request,res=response) => {
         comida
     });
 }
-
-
+//////////////////////////solicitudes musica////////////////////////////////////
 const usuariosMusicaGet = async (req=request,res=response) => {
     const{limite=5, desde=0, fecha} = req.query;
     const [total, musica] = await Promise.all([
@@ -147,15 +199,15 @@ const usuariosMusicaPut = async (req=request,res=response) => {
     });
 }
 const usuariosMusicaPost = async (req=request,res=response) => {
-    const {salon, servicio, caracteristica, precio, fecha, nombreusuario, contraseña } = req.body;
-    const musica = new Musica( {salon, servicio, caracteristica, precio, fecha, nombreusuario, contraseña} );
+    const {salon, servicio, caracteristica, evento, grupo, precio, fecha, nombreusuario, contraseña } = req.body;
+    const musica = new Musica( {salon, servicio, caracteristica, evento, grupo, precio, fecha, nombreusuario, contraseña} );
     if ( servicio != "musica"){ 
         return res.status(400).json({
             msg: 'Peticion post debe ser a servicio musica'
         })
     }
     //Verificar si está reservado
-    const existeFecha = await Musica.findOne({ fecha,salon,servicio });
+    const existeFecha = await Musica.findOne({ fecha,grupo,servicio });
     if ( existeFecha ) {
         return res.status(400).json({
             msg: 'Esa fecha ya está apartada'
@@ -177,8 +229,7 @@ const usuariosMusicaDelete = async (req=request,res=response) => {
         musica
     });
 }
-
-
+////////////////////////solicitudes bartender//////////////////////////////////
 const usuariosBartenderGet = async(req=request,res=response) => {
     const{limite=5, desde=0, fecha} = req.query;
     const [total, bartender] = await Promise.all([
@@ -232,8 +283,7 @@ const usuariosBartenderDelete = async (req=request,res=response) => {
         bartender
     });
 }
-
-
+////////////////////////solicitudes decoracion/////////////////////////////////
 const usuariosDecoracionGet = async (req=request,res=response) => {
     const{limite=5, desde=0, fecha} = req.query;
     const [total, decoracion] = await Promise.all([
@@ -291,6 +341,11 @@ const usuariosDecoracionDelete = async (req=request,res=response) => {
 
 
 module.exports = {
+    usuariosGet,
+    usuariosPost,
+    usuariosPut,
+    usuariosDelete,
+
     usuariosSalonesGet,
     usuariosSalonesPost,
     usuariosSalonesPut,

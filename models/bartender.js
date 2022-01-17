@@ -14,6 +14,15 @@ const BartenderSchema = Schema({
     caracteristica: {
         type: String,
     },
+    evento: {
+        type: String,
+    },
+    bartenderpro: {
+        type: Number,
+    },
+    garzones: {
+        type: Number,
+    },
     precio: {
         type: Number,
     },

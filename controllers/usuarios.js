@@ -253,8 +253,8 @@ const usuariosBartenderPut = async (req=request,res=response) => {
     });
 }
 const usuariosBartenderPost = async (req=request,res=response) => {
-    const {salon, servicio, caracteristica, precio, fecha, nombreusuario, contraseña } = req.body;
-    const bartender = new Bartender( {salon, servicio, caracteristica, precio, fecha, nombreusuario, contraseña} );
+    const {salon, servicio, caracteristica, evento, bartenderpro, garzones,precio, fecha, nombreusuario, contraseña } = req.body;
+    const bartender = new Bartender( {salon, servicio, caracteristica, evento, bartenderpro, garzones, precio, fecha, nombreusuario, contraseña} );
     if ( servicio != "bartender"){ 
         return res.status(400).json({
             msg: 'Peticion post debe ser a servicio bartender'
@@ -307,8 +307,8 @@ const usuariosDecoracionPut = async (req=request,res=response) => {
     });
 }
 const usuariosDecoracionPost = async (req=request,res=response) => {
-    const {salon, servicio, caracteristica, precio, fecha, nombreusuario, contraseña } = req.body;
-    const decoracion = new Decoracion( {salon, servicio, caracteristica, precio, fecha, nombreusuario, contraseña} );
+    const {salon, servicio, caracteristica, evento, flores, centromesa, precio, fecha, nombreusuario, contraseña } = req.body;
+    const decoracion = new Decoracion( {salon, servicio, caracteristica, evento, flores, centromesa, precio, fecha, nombreusuario, contraseña} );
     if ( servicio != "decoracion"){ 
         return res.status(400).json({
             msg: 'Peticion post debe ser a servicio decoracion'

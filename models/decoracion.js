@@ -14,6 +14,15 @@ const DecoracionSchema = Schema({
     caracteristica: {
         type: String,
     },
+    evento: {
+        type: String,
+    },
+    flores: {
+        type: Boolean,
+    },
+    centromesa: {
+        type: Boolean,
+    },
     precio: {
         type: Number,
     },

@@ -96,7 +96,11 @@ router.put('/servicios/bartender/:id',[
     check('id').custom( existeReservaBartenderPorId ),
     validarCampos     
 ],   usuariosBartenderPut);
-router.post('/servicios/bartender', verificacionDatos, usuariosBartenderPost);
+router.post('/servicios/bartender', verificacionDatos, 
+    check('garzones','La cantidad de bartenders debe ser un número').isDecimal(),
+    check('bartenderpro','La cantidad de bartenders debe ser un número').isDecimal(),
+    validarCampos,
+    usuariosBartenderPost);
 router.delete('/servicios/bartender/:id',[
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeReservaBartenderPorId ),
@@ -109,7 +113,11 @@ router.put('/servicios/decoracion/:id',[
     check('id').custom( existeReservaDecoracionPorId ),
     validarCampos  
 ],   usuariosDecoracionPut);
-router.post('/servicios/decoracion',  verificacionDatos, usuariosDecoracionPost);
+router.post('/servicios/decoracion',  verificacionDatos, 
+    check('flores','Flores debe ser un booleano').isBoolean(),
+    check('centromesa','Centro de mesa debe ser booleano').isBoolean(),
+    validarCampos,
+    usuariosDecoracionPost);
 router.delete('/servicios/decoracion/:id',[
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeReservaDecoracionPorId ),

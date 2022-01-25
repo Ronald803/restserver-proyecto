@@ -50,10 +50,12 @@ const usuariosPost = async (req=request,res=response) => {
 }
 const usuariosDelete = async (req=request,res=response) => {
     const {id} = req.params;
-    const usuario = await Usuario.findByIdAndUpdate(id,{caracteristica:"eliminado"});
+ 
+    const usuario = await Usuario.findByIdAndUpdate(id, { caracteristica: "eliminado"});
+    const usuarioAutenticado = req.usuario;
     res.json({
         msg: 'Solicitud DELETE a salones, controlador',
-        usuario
+        usuario, usuarioAutenticado 
         });
     }
 ///////////////////////////solicitudes salones///////////////////////////////////

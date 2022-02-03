@@ -1,9 +1,11 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
 
-const { validarCampos } = require('../middlewares/validar-campos');
-const { validarJWT } = require('../middlewares/validar-jwt');
-const { esAdminRole,tieneRole } = require('../middlewares/validar-roles');
+//const { validarCampos } = require('../middlewares/validar-campos');
+//const { validarJWT } = require('../middlewares/validar-jwt');
+//const { esAdminRole,tieneRole } = require('../middlewares/validar-roles');
+const {
+    validarCampos, verificacionDatosUsuario, verificacionDatos, validarJWT, esAdminRole, tieneRole} =require('../middlewares');
 
 const { esSalonValido,                  esServicioValido,               esPlatoValido,          esGrupoValido,
         existeReservaSalonPorId,        existeReservaComidaPorId,       existeReservaMusicaPorId,       
@@ -16,31 +18,11 @@ const { usuariosGet,            usuariosPost,           usuariosPut,            
         usuariosBartenderGet,   usuariosBartenderPut,   usuariosBartenderPost,      usuariosBartenderDelete, 
         usuariosDecoracionGet,  usuariosDecoracionPut,  usuariosDecoracionPost,     usuariosDecoracionDelete} = require('../controllers/usuarios');
 
-
-
 const router = Router();
-const verificacionDatos = [
-    check('salon', 'El salón es obligatorio').not().isEmpty(),
-    check('nombreusuario', 'El nombre de usuario es obligatorio').not().isEmpty(),
-    check('salon').custom( esSalonValido ),
-    check('servicio').custom( esServicioValido ),
-    check('fecha','No es una fecha correcta').isDate(),
-    check('contraseña', 'La contraseña debe de ser más de 6 caracteres').isLength({min: 6}),
-    check('precio', 'El precio debe ser un numero').isDecimal(),    
-    validarCampos
-];
-const verificacionDatosUsuario = [
-    check('nombreusuario', 'El nombre de usuario es obligatorio').not().isEmpty(),
-    check('correo', 'El correo es obligatorio').not().isEmpty(),
-    check('celular', 'El número de celular es obligatorio').not().isEmpty(),
-    check('celular', 'El celular debe ser un numero').isDecimal(),    
-    check('celular', 'El celular debe de ser más de 8 caracteres').isLength({min: 8}),
-    check('contraseña', 'La contraseña debe de ser más de 6 caracteres').isLength({min: 6}),
-    validarCampos
-];
 //////////////////////////////////Peticiones a Usuarios///////////////////////////////////////////////////////
-router.get('/usuarios',   usuariosGet);
+router.get('/usuarios', [validarJWT, tieneRole('ADMINISTRADOR','MODERADOR')],  usuariosGet);
 router.put('/usuarios/:id',[
+    validarJWT, 
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeUsuarioPorId ),
     validarCampos
@@ -48,14 +30,12 @@ router.put('/usuarios/:id',[
 router.post('/usuarios', verificacionDatosUsuario, usuariosPost );
 router.delete('/usuarios/:id',[
     validarJWT,
-    //esAdminRole,
-    tieneRole('ADMIN_ROLE','VENTAS_ROLE'),
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeUsuarioPorId ),
     validarCampos
 ],usuariosDelete );
 //////////////////////////////////Peticiones a Salones///////////////////////////////////////////////////////
-router.get('/servicios/salones',   usuariosSalonesGet);
+router.get('/servicios/salones', [validarJWT], usuariosSalonesGet);
 router.put('/servicios/salones/:id',[
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeReservaSalonPorId ),
@@ -68,7 +48,7 @@ router.delete('/servicios/salones/:id',[
     validarCampos
 ],usuariosSalonesDelete );
 /////////////////////////////////Peticiones a Comida////////////////////////////////////////////////////////
-router.get('/servicios/comida',   usuariosComidaGet);
+router.get('/servicios/comida', [validarJWT], usuariosComidaGet);
 router.put('/servicios/comida/:id',[
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeReservaComidaPorId ),
@@ -83,7 +63,7 @@ router.delete('/servicios/comida/:id',[
     validarCampos
 ],usuariosComidaDelete);
 //////////////////////////////////Peticiones a Música////////////////////////////////////////////////////////
-router.get('/servicios/musica',   usuariosMusicaGet);
+router.get('/servicios/musica', [validarJWT], usuariosMusicaGet);
 router.put('/servicios/musica/:id',[
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeReservaMusicaPorId ),
@@ -98,7 +78,7 @@ router.delete('/servicios/musica/:id',[
     validarCampos
 ],usuariosMusicaDelete);
 //////////////////////////////////Peticiones a Bartender/////////////////////////////////////////////////////
-router.get('/servicios/bartender',   usuariosBartenderGet);
+router.get('/servicios/bartender', [validarJWT], usuariosBartenderGet);
 router.put('/servicios/bartender/:id',[
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeReservaBartenderPorId ),
@@ -115,7 +95,7 @@ router.delete('/servicios/bartender/:id',[
     validarCampos
 ],usuariosBartenderDelete);
 //////////////////////////////////Peticiones a Decoraciones////////////////////////////////////////////////////
-router.get('/servicios/decoracion',   usuariosDecoracionGet);
+router.get('/servicios/decoracion', [validarJWT], usuariosDecoracionGet);
 router.put('/servicios/decoracion/:id',[
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeReservaDecoracionPorId ),

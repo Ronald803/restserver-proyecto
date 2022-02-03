@@ -27,15 +27,31 @@ const usuariosPut = async (req=request,res=response) => {
 console.log("peticion a put usuarios");
     const { id } = req.params;
     const {_id,contraseña, rol, ...resto} = req.body;
-    const salon = await Usuario.findByIdAndUpdate( id, resto );
-    res.json({
-        msg: 'Solicitud PUT a salones, controlador',
-        salon, id 
-    });
+    const usuarioAutenticado = req.usuario;
+    if(id == req.usuario.id || req.usuario.rol == "ADMINISTRADOR"){
+        const usuario = await Usuario.findByIdAndUpdate(id, resto);
+        res.json({ msg: 'Solicitud PUT a usuarios, controlador', usuario, usuarioAutenticado });
+        } else {
+            res.json({ msg: 'Acción denegada' });    
+        }
 }
 const usuariosPost = async (req=request,res=response) => {
    const {nombreusuario, contraseña, correo, celular, caracteristica, rol } = req.body;
     const usuario = new Usuario( {nombreusuario, contraseña, correo, celular, caracteristica, rol} );
+    //Verificar si el usuario ya está registrado
+    const existeNombreUsuario = await Usuario.findOne({ nombreusuario });
+    if ( existeNombreUsuario   ) {
+        return res.status(400).json({
+            msg: 'Ese nombre de usuario ya está apartado'
+        })
+    }  
+    const existeCorreo = await Usuario.findOne({ correo });
+    if ( existeCorreo ) {
+        return res.status(400).json({
+            msg: 'El correo electronico ya fue registrado por otra cuenta'
+        })
+    }
+    
     //Encriptar la contraseña
     const salt = bcryptjs.genSaltSync();
     usuario.contraseña = bcryptjs.hashSync( contraseña, salt );
@@ -50,13 +66,13 @@ const usuariosPost = async (req=request,res=response) => {
 }
 const usuariosDelete = async (req=request,res=response) => {
     const {id} = req.params;
- 
-    const usuario = await Usuario.findByIdAndUpdate(id, { caracteristica: "eliminado"});
     const usuarioAutenticado = req.usuario;
-    res.json({
-        msg: 'Solicitud DELETE a salones, controlador',
-        usuario, usuarioAutenticado 
-        });
+    if(id == req.usuario.id || req.usuario.rol == "ADMINISTRADOR"){
+        const usuario = await Usuario.findByIdAndUpdate(id, { caracteristica: "eliminado"});
+        res.json({ msg: 'Solicitud DELETE a salones, controlador', usuario, usuarioAutenticado });
+        } else {
+            res.json({ msg: 'Acción denegada' });    
+        }
     }
 ///////////////////////////solicitudes salones///////////////////////////////////
 const usuariosSalonesGet = async (req=request,res=response) => {

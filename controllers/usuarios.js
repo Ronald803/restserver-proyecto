@@ -99,8 +99,9 @@ const usuariosSalonesPut = async (req=request,res=response) => {
             });
 }
 const usuariosSalonesPost = async (req=request,res=response) => {
-            const {salon, servicio, caracteristica, evento, precio, fecha, nombreusuario, contraseña } = req.body;
-            const sssalon = new Salon( {salon, servicio, caracteristica, evento, precio, fecha, nombreusuario, contraseña} );
+            const {salon, servicio, caracteristica, evento, precio, fecha } = req.body;
+            const nombreusuario = req.usuario.nombreusuario; 
+            const sssalon = new Salon( {salon, servicio, caracteristica, evento, precio, fecha, nombreusuario} );
 
             //Verificar si está reservado
             const existeFecha = await Salon.findOne({ fecha,salon,servicio });
@@ -115,13 +116,8 @@ const usuariosSalonesPost = async (req=request,res=response) => {
                     msg: 'Peticion post debe ser a servicio salon'
                 })
             }
-            //Encriptar la contraseña
-            const salt = bcryptjs.genSaltSync();
-            sssalon.contraseña = bcryptjs.hashSync( contraseña, salt );
-        
             //Guardar en BD
             await sssalon.save();
-        
         
             res.json({
                 msg: 'Solicitud POST a salones, controlador',
@@ -160,8 +156,9 @@ const usuariosComidaPut = async (req=request,res=response) => {
     });
 }
 const usuariosComidaPost= async(req=request,res=response) => {
-    const {salon, servicio, caracteristica, evento, plato, invitados, precio, fecha, nombreusuario, contraseña } = req.body;
-    const comida = new Comida( {salon, servicio, caracteristica, evento, plato, invitados, precio, fecha, nombreusuario, contraseña} );
+    const {salon, servicio, caracteristica, evento, plato, invitados, precio, fecha } = req.body;
+    const nombreusuario = req.usuario.nombreusuario;
+    const comida = new Comida( {salon, servicio, caracteristica, evento, plato, invitados, precio, fecha, nombreusuario} );
     //Verificar si el Post es a la base de datos del servicio correcto
     if ( servicio != "comida"){ 
         return res.status(400).json({
@@ -175,9 +172,7 @@ const usuariosComidaPost= async(req=request,res=response) => {
             msg: 'Esa fecha ya está apartada'
         })
     }    */
-    //Encriptar la contraseña
-    const salt = bcryptjs.genSaltSync();
-    comida.contraseña = bcryptjs.hashSync( contraseña, salt );
+
     //Guardar en BD
     await comida.save();
     res.json({
@@ -217,8 +212,9 @@ const usuariosMusicaPut = async (req=request,res=response) => {
     });
 }
 const usuariosMusicaPost = async (req=request,res=response) => {
-    const {salon, servicio, caracteristica, evento, grupo, precio, fecha, nombreusuario, contraseña } = req.body;
-    const musica = new Musica( {salon, servicio, caracteristica, evento, grupo, precio, fecha, nombreusuario, contraseña} );
+    const {salon, servicio, caracteristica, evento, grupo, precio, fecha} = req.body;
+    const nombreusuario = req.usuario.nombreusuario;
+    const musica = new Musica( {salon, servicio, caracteristica, evento, grupo, precio, fecha, nombreusuario} );
     if ( servicio != "musica"){ 
         return res.status(400).json({
             msg: 'Peticion post debe ser a servicio musica'
@@ -271,8 +267,9 @@ const usuariosBartenderPut = async (req=request,res=response) => {
     });
 }
 const usuariosBartenderPost = async (req=request,res=response) => {
-    const {salon, servicio, caracteristica, evento, bartenderpro, garzones,precio, fecha, nombreusuario, contraseña } = req.body;
-    const bartender = new Bartender( {salon, servicio, caracteristica, evento, bartenderpro, garzones, precio, fecha, nombreusuario, contraseña} );
+    const {salon, servicio, caracteristica, evento, bartenderpro, garzones,precio, fecha} = req.body;
+    const nombreusuario = req.usuario.nombreusuario;
+    const bartender = new Bartender( {salon, servicio, caracteristica, evento, bartenderpro, garzones, precio, fecha, nombreusuario} );
     if ( servicio != "bartender"){ 
         return res.status(400).json({
             msg: 'Peticion post debe ser a servicio bartender'
@@ -325,8 +322,9 @@ const usuariosDecoracionPut = async (req=request,res=response) => {
     });
 }
 const usuariosDecoracionPost = async (req=request,res=response) => {
-    const {salon, servicio, caracteristica, evento, flores, centromesa, precio, fecha, nombreusuario, contraseña } = req.body;
-    const decoracion = new Decoracion( {salon, servicio, caracteristica, evento, flores, centromesa, precio, fecha, nombreusuario, contraseña} );
+    const {salon, servicio, caracteristica, evento, flores, centromesa, precio, fecha } = req.body;
+    const nombreusuario = req.usuario.nombreusuario;
+    const decoracion = new Decoracion( {salon, servicio, caracteristica, evento, flores, centromesa, precio, fecha, nombreusuario} );
     if ( servicio != "decoracion"){ 
         return res.status(400).json({
             msg: 'Peticion post debe ser a servicio decoracion'

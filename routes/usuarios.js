@@ -35,78 +35,88 @@ router.delete('/usuarios/:id',[
     validarCampos
 ],usuariosDelete );
 //////////////////////////////////Peticiones a Salones///////////////////////////////////////////////////////
-router.get('/servicios/salones', [validarJWT], usuariosSalonesGet);
+router.get('/servicios/salones', usuariosSalonesGet);
 router.put('/servicios/salones/:id',[
+    validarJWT, tieneRole('ADMINISTRADOR','MODERADOR'),
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeReservaSalonPorId ),
     validarCampos
 ],usuariosSalonesPut );
-router.post('/servicios/salones', verificacionDatos,usuariosSalonesPost );
+router.post('/servicios/salones', [validarJWT], verificacionDatos,usuariosSalonesPost );
 router.delete('/servicios/salones/:id',[
+    validarJWT, tieneRole('ADMINISTRADOR','MODERADOR'),
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeReservaSalonPorId ),
     validarCampos
 ],usuariosSalonesDelete );
 /////////////////////////////////Peticiones a Comida////////////////////////////////////////////////////////
-router.get('/servicios/comida', [validarJWT], usuariosComidaGet);
+router.get('/servicios/comida',  usuariosComidaGet);
 router.put('/servicios/comida/:id',[
+    validarJWT, tieneRole('ADMINISTRADOR','MODERADOR'),
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeReservaComidaPorId ),
     validarCampos
 ],   usuariosComidaPut);
-router.post('/servicios/comida', verificacionDatos,
+router.post('/servicios/comida', [validarJWT], verificacionDatos,
 check('plato').custom( esPlatoValido ),validarCampos,
 usuariosComidaPost);
 router.delete('/servicios/comida/:id',[
+    validarJWT, tieneRole('ADMINISTRADOR','MODERADOR'),
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeReservaComidaPorId ),
     validarCampos
 ],usuariosComidaDelete);
 //////////////////////////////////Peticiones a Música////////////////////////////////////////////////////////
-router.get('/servicios/musica', [validarJWT], usuariosMusicaGet);
+router.get('/servicios/musica', usuariosMusicaGet);
 router.put('/servicios/musica/:id',[
+    validarJWT, tieneRole('ADMINISTRADOR','MODERADOR'),
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeReservaMusicaPorId ),
     validarCampos     
 ], usuariosMusicaPut);
-router.post('/servicios/musica', verificacionDatos, 
+router.post('/servicios/musica',[validarJWT], verificacionDatos, 
 check('grupo').custom( esGrupoValido ),validarCampos,
 usuariosMusicaPost);
 router.delete('/servicios/musica/:id',[
+    validarJWT, tieneRole('ADMINISTRADOR','MODERADOR'),
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeReservaMusicaPorId ),
     validarCampos
 ],usuariosMusicaDelete);
 //////////////////////////////////Peticiones a Bartender/////////////////////////////////////////////////////
-router.get('/servicios/bartender', [validarJWT], usuariosBartenderGet);
+router.get('/servicios/bartender', usuariosBartenderGet);
 router.put('/servicios/bartender/:id',[
+    validarJWT, tieneRole('ADMINISTRADOR','MODERADOR'),
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeReservaBartenderPorId ),
     validarCampos     
 ],   usuariosBartenderPut);
-router.post('/servicios/bartender', verificacionDatos, 
+router.post('/servicios/bartender',[validarJWT], verificacionDatos, 
     check('garzones','La cantidad de bartenders debe ser un número').isDecimal(),
     check('bartenderpro','La cantidad de bartenders debe ser un número').isDecimal(),
     validarCampos,
     usuariosBartenderPost);
 router.delete('/servicios/bartender/:id',[
+    validarJWT, tieneRole('ADMINISTRADOR','MODERADOR'),
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeReservaBartenderPorId ),
     validarCampos
 ],usuariosBartenderDelete);
 //////////////////////////////////Peticiones a Decoraciones////////////////////////////////////////////////////
-router.get('/servicios/decoracion', [validarJWT], usuariosDecoracionGet);
+router.get('/servicios/decoracion', usuariosDecoracionGet);
 router.put('/servicios/decoracion/:id',[
+    validarJWT, tieneRole('ADMINISTRADOR','MODERADOR'),
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeReservaDecoracionPorId ),
     validarCampos  
 ],   usuariosDecoracionPut);
-router.post('/servicios/decoracion',  verificacionDatos, 
+router.post('/servicios/decoracion', [validarJWT], verificacionDatos, 
     check('flores','Flores debe ser un booleano').isBoolean(),
     check('centromesa','Centro de mesa debe ser booleano').isBoolean(),
     validarCampos,
     usuariosDecoracionPost);
 router.delete('/servicios/decoracion/:id',[
+    validarJWT, tieneRole('ADMINISTRADOR','MODERADOR'),
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeReservaDecoracionPorId ),
     validarCampos

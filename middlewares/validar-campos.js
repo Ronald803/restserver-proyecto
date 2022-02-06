@@ -22,11 +22,11 @@ const verificacionDatosUsuario = [
 ];
 const verificacionDatos = [
     check('salon', 'El salón es obligatorio').not().isEmpty(),
-    check('nombreusuario', 'El nombre de usuario es obligatorio').not().isEmpty(),
+//    check('nombreusuario', 'El nombre de usuario es obligatorio').not().isEmpty(),
     check('salon').custom( esSalonValido ),
     check('servicio').custom( esServicioValido ),
     check('fecha','No es una fecha correcta').isDate(),
-    check('contraseña', 'La contraseña debe de ser más de 6 caracteres').isLength({min: 6}),
+//    check('contraseña', 'La contraseña debe de ser más de 6 caracteres').isLength({min: 6}),
     check('precio', 'El precio debe ser un numero').isDecimal(),    
     validarCampos
 ];

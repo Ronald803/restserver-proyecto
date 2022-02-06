@@ -30,12 +30,7 @@ const MusicaSchema = Schema({
     nombreusuario: {
         type: String,
         required: [true, 'El nombre de usuario es obligatorio']
-    },
-    contraseña: {
-        type: String,
-        required: [true, "La contraseña es obligatoria"]
     }
-
 }); 
 MusicaSchema.methods.toJSON = function(){
     const {__v, contraseña, ...musica}= this.toObject();

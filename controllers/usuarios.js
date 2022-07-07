@@ -1,7 +1,7 @@
 const { response, request } = require('express');
 const bcryptjs = require('bcryptjs');
 
-
+const { generarJWT } = require('../helpers/generar-jwt');
 const Usuario = require( '../models/usuario' );
 const Servicio = require( '../models/servicio');
 const Comida = require( '../models/comida');
@@ -58,11 +58,13 @@ const usuariosPost = async (req=request,res=response) => {
 
    //Guardar en BD
     await usuario.save();
+    const token = await generarJWT( usuario.id ); 
 
     res.json({
-        msg: 'Solicitud POST a usuario',
-        usuario, 
-    });   
+            usuario,
+            token
+    }
+    );   
 }
 const usuariosDelete = async (req=request,res=response) => {
     const {id} = req.params;
@@ -83,20 +85,26 @@ const usuariosSalonesGet = async (req=request,res=response) => {
                 .limit(Number(limite))
                 .skip(Number(desde))
             ])
-            res.json({
-                total,
-                salons,
-            });
+            res.json(
+                salons
+            );
 }   
 const usuariosSalonesPut = async (req=request,res=response) => {
     console.log("peticion a put salones");
             const { id } = req.params;
-            const {_id,servicio , caracteristica, precio, ...resto} = req.body;
-            const salon = await Salon.findByIdAndUpdate( id, resto );
-            res.json({
-                msg: 'Solicitud PUT a salones, controlador',
-                salon, id 
-            });
+            const {fecha,salon} = req.body;
+            const auxsalon = await Salon.find({fecha,salon})
+            if (auxsalon.length === 0){
+                const sssalon = await Salon.findByIdAndUpdate( id, {fecha,salon} );
+                    res.json({
+                        msg: 'Solicitud PUT a salones, controlador',
+                        sssalon 
+                    });    
+            } else{
+                res.json({
+                    msg: `El salon ${salon} para la fecha ${fecha} ya fue reservado`
+                })    
+            }
 }
 const usuariosSalonesPost = async (req=request,res=response) => {
             const {salon, servicio, caracteristica, evento, precio, fecha } = req.body;
@@ -141,14 +149,13 @@ const usuariosComidaGet = async (req=request,res=response) => {
         .limit(Number(limite))
         .skip(Number(desde))
     ])
-    res.json({
-        total,
-        comidas,
-    });
+    res.json(
+        comidas
+    );
 }
 const usuariosComidaPut = async (req=request,res=response) => {
     const { id } = req.params;
-    const {_id,servicio , caracteristica, precio, ...resto} = req.body;
+    const {_id,servicio , caracteristica, precio, nombreusuario, ...resto} = req.body;
     const comida = await Comida.findByIdAndUpdate( id, resto );
     res.json({
         msg: 'Solicitud PUT a comida, controlador',
@@ -197,19 +204,26 @@ const usuariosMusicaGet = async (req=request,res=response) => {
         .limit(Number(limite))
         .skip(Number(desde))
     ])
-    res.json({
-        total,
-        musica,
-    });
+    res.json(
+        musica
+    );
 }
 const usuariosMusicaPut = async (req=request,res=response) => {
     const { id } = req.params;
-    const {_id,servicio , caracteristica, precio, ...resto} = req.body;
-    const musica = await Musica.findByIdAndUpdate( id, resto );
-    res.json({
-        msg: 'Solicitud PUT a musica, controlador',
-        musica, id 
-    });
+    const {fecha, grupo} = req.body;
+    const auxmusica = await Musica.find({fecha,grupo})
+    if(auxmusica.length === 0){
+        const musica = await Musica.findByIdAndUpdate( id, {fecha, grupo} );
+            res.json({
+                msg: 'Solicitud PUT a musica, controlador',
+                musica, id 
+            });
+    }else{
+        res.json({
+            msg: `El grupo ${grupo} para la fecha ${fecha} ya fue reservado`
+        })
+    }
+    
 }
 const usuariosMusicaPost = async (req=request,res=response) => {
     const {salon, servicio, caracteristica, evento, grupo, precio, fecha} = req.body;
@@ -252,10 +266,9 @@ const usuariosBartenderGet = async(req=request,res=response) => {
         .limit(Number(limite))
         .skip(Number(desde))
     ])
-    res.json({
-        total,
-        bartender,
-    });
+    res.json(
+        bartender
+        );
 }
 const usuariosBartenderPut = async (req=request,res=response) => {
     const { id } = req.params;
@@ -275,13 +288,13 @@ const usuariosBartenderPost = async (req=request,res=response) => {
             msg: 'Peticion post debe ser a servicio bartender'
         })
     }
-    //Verificar si está reservado
-    const existeFecha = await Bartender.findOne({ fecha,salon,servicio });
-    if ( existeFecha ) {
-        return res.status(400).json({
-            msg: 'Esa fecha ya está apartada'
-        })
-    }
+//    //Verificar si está reservado
+//    const existeFecha = await Bartender.findOne({ fecha,salon,servicio });
+//    if ( existeFecha ) {
+//        return res.status(400).json({
+//            msg: 'Esa fecha ya está apartada'
+//        })
+//    }
     //Guardar en BD
         await bartender.save();
    
@@ -294,7 +307,7 @@ const usuariosBartenderDelete = async (req=request,res=response) => {
     const {id} = req.params;
     const bartender = await Bartender.findByIdAndUpdate(id,{caracteristica:"eliminado"});
     res.json({
-        msg: 'Solicitud DELETE a musica, controlador',
+        msg: 'Solicitud DELETE a bartender, controlador',
         bartender
     });
 }
@@ -330,13 +343,13 @@ const usuariosDecoracionPost = async (req=request,res=response) => {
             msg: 'Peticion post debe ser a servicio decoracion'
         })
     }
-    //Verificar si está reservado
-    const existeFecha = await Decoracion.findOne({ fecha,salon,servicio });
-    if ( existeFecha ) {
-        return res.status(400).json({
-            msg: 'Esa fecha ya está apartada'
-        })
-    }
+//    //Verificar si está reservado
+//    const existeFecha = await Decoracion.findOne({ fecha,salon,servicio });
+//    if ( existeFecha ) {
+//        return res.status(400).json({
+//            msg: 'Esa fecha ya está apartada'
+//        })
+//    }
     //Guardar en BD
         await decoracion.save();
    
@@ -349,7 +362,7 @@ const usuariosDecoracionDelete = async (req=request,res=response) => {
     const {id} = req.params;
     const decoracion = await Decoracion.findByIdAndUpdate(id,{caracteristica:"eliminado"});
     res.json({
-        msg: 'Solicitud DELETE a musica, controlador',
+        msg: 'Solicitud DELETE a decoracion, controlador',
         decoracion
     });
 }

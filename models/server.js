@@ -8,6 +8,7 @@ class Server {
         this.port = process.env.PORT;
         this.usuariosPath = '/';
         this.authPath     = '/auth'; 
+        this.buscar       = '/buscar';
 
         //Conectar a bse de datos
         this.conectarDB();
@@ -37,6 +38,7 @@ class Server {
     routes(){
         this.app.use(this.authPath, require('../routes/auth'));
         this.app.use(this.usuariosPath, require('../routes/usuarios'));
+        this.app.use(this.buscar, require ('../routes/buscar'));
     }
 
     listen() {

@@ -78,11 +78,10 @@ const usuariosDelete = async (req=request,res=response) => {
     }
 ///////////////////////////solicitudes salones///////////////////////////////////
 const usuariosSalonesGet = async (req=request,res=response) => {
-            const{limite=5, desde=0, fecha} = req.query;
+            const{desde=0, fecha} = req.query;
             const [total, salons] = await Promise.all([
                 Salon.countDocuments({fecha}),
                 Salon.find({fecha })
-                .limit(Number(limite))
                 .skip(Number(desde))
             ])
             res.json(
@@ -96,10 +95,10 @@ const usuariosSalonesPut = async (req=request,res=response) => {
             const auxsalon = await Salon.find({fecha,salon})
             if (auxsalon.length === 0){
                 const sssalon = await Salon.findByIdAndUpdate( id, {fecha,salon} );
-                    res.json({
-                        msg: 'Solicitud PUT a salones, controlador',
+                    res.json(
+                        
                         sssalon 
-                    });    
+                    );    
             } else{
                 res.json({
                     msg: `El salon ${salon} para la fecha ${fecha} ya fue reservado`
@@ -112,11 +111,12 @@ const usuariosSalonesPost = async (req=request,res=response) => {
             const sssalon = new Salon( {salon, servicio, caracteristica, evento, precio, fecha, nombreusuario} );
 
             //Verificar si está reservado
-            const existeFecha = await Salon.findOne({ fecha,salon,servicio });
-            if ( existeFecha   ) {
+            const existeFecha = await Salon.findOne({ fecha,salon,servicio,caracteristica });
+            if ( existeFecha ) {
                 return res.status(400).json({
-                    msg: 'Esa fecha ya está apartada'
+                msg: 'Esa fecha ya está apartada'
                 })
+                
             }  
             //Verificar si el Post es a la base de datos del servicio correcto
             if ( servicio != "salon"){ 

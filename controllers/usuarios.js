@@ -92,13 +92,11 @@ const usuariosSalonesPut = async (req=request,res=response) => {
     console.log("peticion a put salones");
             const { id } = req.params;
             const {fecha,salon} = req.body;
-            const auxsalon = await Salon.find({fecha,salon})
+            const caracteristica = "reservado";
+            const auxsalon = await Salon.find({fecha,salon,caracteristica})
             if (auxsalon.length === 0){
                 const sssalon = await Salon.findByIdAndUpdate( id, {fecha,salon} );
-                    res.json(
-                        
-                        sssalon 
-                    );    
+                    res.json(sssalon);    
             } else{
                 res.json({
                     msg: `El salon ${salon} para la fecha ${fecha} ya fue reservado`
@@ -109,19 +107,17 @@ const usuariosSalonesPost = async (req=request,res=response) => {
             const {salon, servicio, caracteristica, evento, precio, fecha } = req.body;
             const nombreusuario = req.usuario.nombreusuario; 
             const sssalon = new Salon( {salon, servicio, caracteristica, evento, precio, fecha, nombreusuario} );
-
             //Verificar si está reservado
             const existeFecha = await Salon.findOne({ fecha,salon,servicio,caracteristica });
             if ( existeFecha ) {
                 return res.status(400).json({
                 msg: 'Esa fecha ya está apartada'
                 })
-                
             }  
             //Verificar si el Post es a la base de datos del servicio correcto
-            if ( servicio != "salon"){ 
+            if ( servicio != "salones"){ 
                 return res.status(400).json({
-                    msg: 'Peticion post debe ser a servicio salon'
+                    msg: 'Peticion post debe ser a servicio salones'
                 })
             }
             //Guardar en BD
@@ -155,12 +151,9 @@ const usuariosComidaGet = async (req=request,res=response) => {
 }
 const usuariosComidaPut = async (req=request,res=response) => {
     const { id } = req.params;
-    const {_id,servicio , caracteristica, precio, nombreusuario, ...resto} = req.body;
-    const comida = await Comida.findByIdAndUpdate( id, resto );
-    res.json({
-        msg: 'Solicitud PUT a comida, controlador',
-        comida, id 
-    });
+    const {fecha,salon,plato,invitados} = req.body;
+    const comida = await Comida.findByIdAndUpdate( id, {fecha,salon,plato,invitados} );
+    res.json(comida);
 }
 const usuariosComidaPost= async(req=request,res=response) => {
     const {salon, servicio, caracteristica, evento, plato, invitados, precio, fecha } = req.body;
@@ -172,14 +165,6 @@ const usuariosComidaPost= async(req=request,res=response) => {
             msg: 'Peticion post debe ser a servicio comida'
         })
     }
-/*    //Verificar si está reservado
-    const existeFecha = await Comida.findOne({ fecha,salon,servicio });
-    if ( existeFecha ) {
-        return res.status(400).json({
-            msg: 'Esa fecha ya está apartada'
-        })
-    }    */
-
     //Guardar en BD
     await comida.save();
     res.json({
@@ -210,20 +195,17 @@ const usuariosMusicaGet = async (req=request,res=response) => {
 }
 const usuariosMusicaPut = async (req=request,res=response) => {
     const { id } = req.params;
-    const {fecha, grupo} = req.body;
-    const auxmusica = await Musica.find({fecha,grupo})
+    const {fecha, grupo, salon} = req.body;
+    const caracteristica = "reservado";
+    const auxmusica = await Musica.find({fecha,grupo,caracteristica})
     if(auxmusica.length === 0){
-        const musica = await Musica.findByIdAndUpdate( id, {fecha, grupo} );
-            res.json({
-                msg: 'Solicitud PUT a musica, controlador',
-                musica, id 
-            });
+        const musica = await Musica.findByIdAndUpdate( id, {fecha, grupo, salon} );
+            res.json(musica);
     }else{
         res.json({
             msg: `El grupo ${grupo} para la fecha ${fecha} ya fue reservado`
         })
     }
-    
 }
 const usuariosMusicaPost = async (req=request,res=response) => {
     const {salon, servicio, caracteristica, evento, grupo, precio, fecha} = req.body;
@@ -272,12 +254,9 @@ const usuariosBartenderGet = async(req=request,res=response) => {
 }
 const usuariosBartenderPut = async (req=request,res=response) => {
     const { id } = req.params;
-    const {_id,servicio , caracteristica, precio, ...resto} = req.body;
-    const bartender = await Bartender.findByIdAndUpdate( id, resto );
-    res.json({
-        msg: 'Solicitud PUT a bartender, controlador',
-        bartender, id 
-    });
+    const {bartenderpro,garzones,fecha,salon} = req.body;
+    const bartender = await Bartender.findByIdAndUpdate( id, {fecha, salon, garzones, bartenderpro} );
+    res.json(bartender);
 }
 const usuariosBartenderPost = async (req=request,res=response) => {
     const {salon, servicio, caracteristica, evento, bartenderpro, garzones,precio, fecha} = req.body;
@@ -288,13 +267,6 @@ const usuariosBartenderPost = async (req=request,res=response) => {
             msg: 'Peticion post debe ser a servicio bartender'
         })
     }
-//    //Verificar si está reservado
-//    const existeFecha = await Bartender.findOne({ fecha,salon,servicio });
-//    if ( existeFecha ) {
-//        return res.status(400).json({
-//            msg: 'Esa fecha ya está apartada'
-//        })
-//    }
     //Guardar en BD
         await bartender.save();
    
@@ -329,10 +301,7 @@ const usuariosDecoracionPut = async (req=request,res=response) => {
     const { id } = req.params;
     const {_id,servicio , caracteristica, precio, ...resto} = req.body;
     const decoracion = await Decoracion.findByIdAndUpdate( id, resto );
-    res.json({
-        msg: 'Solicitud PUT a decoracion, controlador',
-        decoracion, id 
-    });
+    res.json(decoracion);
 }
 const usuariosDecoracionPost = async (req=request,res=response) => {
     const {salon, servicio, caracteristica, evento, flores, centromesa, precio, fecha } = req.body;

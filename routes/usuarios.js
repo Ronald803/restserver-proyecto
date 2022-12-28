@@ -1,9 +1,6 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
 
-//const { validarCampos } = require('../middlewares/validar-campos');
-//const { validarJWT } = require('../middlewares/validar-jwt');
-//const { esAdminRole,tieneRole } = require('../middlewares/validar-roles');
 const {
     validarCampos, verificacionDatosUsuario, verificacionDatos, validarJWT, esAdminRole, tieneRole} =require('../middlewares');
 
@@ -20,8 +17,8 @@ const { usuariosGet,            usuariosPost,           usuariosPut,            
 
 const router = Router();
 //////////////////////////////////Peticiones a Usuarios///////////////////////////////////////////////////////
-router.get('/usuarios', [validarJWT, tieneRole('ADMINISTRADOR','MODERADOR')],  usuariosGet);
-router.put('/usuarios/:id',[
+router.get('/usuarios', [validarJWT, tieneRole('ADMINISTRADOR')],  usuariosGet);
+router.put('/servicios/usuarios/:id',[
     validarJWT, 
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeUsuarioPorId ),

@@ -18,19 +18,18 @@ const usuariosGet = async (req=request,res=response) => {
         .limit(Number(limite))
         .skip(Number(desde))
     ])
-    res.json({
-        total,
-        usuarios,
-    });
+    res.json(
+        usuarios
+    );
 }   
 const usuariosPut = async (req=request,res=response) => {
 console.log("peticion a put usuarios");
     const { id } = req.params;
-    const {_id,contraseña, rol, ...resto} = req.body;
+    const {_id,contraseña, rol, celular, correo} = req.body;
     const usuarioAutenticado = req.usuario;
     if(id == req.usuario.id || req.usuario.rol == "ADMINISTRADOR"){
-        const usuario = await Usuario.findByIdAndUpdate(id, resto);
-        res.json({ msg: 'Solicitud PUT a usuarios, controlador', usuario, usuarioAutenticado });
+        const usuario = await Usuario.findByIdAndUpdate(id, {rol,celular,correo});
+        res.json( usuario );
         } else {
             res.json({ msg: 'Acción denegada' });    
         }

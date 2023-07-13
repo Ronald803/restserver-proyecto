@@ -8,6 +8,7 @@ class Server {
         this.usuariosPath = '/';
         this.authPath     = '/auth'; 
         this.buscar       = '/buscar';
+        this.salones      = '/salones';
         //Conectar a bse de datos
         this.conectarDB();
         //Middlewares
@@ -27,9 +28,10 @@ class Server {
         this.app.use( express.static('public') );
     }
     routes(){
-        this.app.use(this.authPath, require('../routes/auth'));
+        this.app.use(this.authPath,     require('../routes/auth'));
         this.app.use(this.usuariosPath, require('../routes/usuarios'));
-        this.app.use(this.buscar, require ('../routes/buscar'));
+        this.app.use(this.buscar,       require('../routes/buscar'));
+        this.app.use(this.salones,      require('../routes/salones'));
     }
     listen() {
         this.app.listen(this.port , ()=>{

@@ -1,27 +1,28 @@
-const { Router } = require('express');
-const { check } = require('express-validator');
+const { Router }        = require('express');
+const { check }         = require('express-validator');
+const controllerSalones = require('../controllers/salones.controllers')
+const router            = Router();
 
-const {usuariosSalonesGet,usuariosSalonesPut,usuariosSalonesPost,usuariosSalonesDelete} = require('../controllers/usuarios')
 const {
     validarCampos, verificacionDatos, validarJWT, tieneRole} =require('../middlewares');
 const { existeReservaSalonPorId } = require('../helpers/db-validators');
 
-const router = Router();
 
-router.get('/servicios/salones', usuariosSalonesGet);
-router.put('/servicios/salones/:id',[
+router.get('/all', controllerSalones.salonesGetAll);
+router.get('/',controllerSalones.salonesGet);
+router.put('/:id',[
     validarJWT, tieneRole('ADMINISTRADOR','MODERADOR'),
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeReservaSalonPorId ),
     validarCampos
-],usuariosSalonesPut );
-router.post('/servicios/salones', [validarJWT], verificacionDatos,usuariosSalonesPost );
+],controllerSalones.salonesPut );
+router.post('/', [validarJWT], verificacionDatos,controllerSalones.salonesPost );
 router.delete('/servicios/salones/:id',[
     validarJWT, tieneRole('ADMINISTRADOR','MODERADOR'),
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeReservaSalonPorId ),
     validarCampos
-],usuariosSalonesDelete );
+],controllerSalones.salonesDelete );
 
 
 module.exports = router;

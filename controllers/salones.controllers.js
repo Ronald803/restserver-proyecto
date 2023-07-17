@@ -60,7 +60,6 @@ const salonesDelete = async (req=request,res=response) => {
     const {id} = req.params;
     const salon = await Salon.findByIdAndUpdate(id,{caracteristica:"eliminado"});
     res.json({
-        msg: 'Solicitud DELETE a salones, controlador',
         salon
     });
 }

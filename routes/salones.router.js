@@ -17,12 +17,15 @@ router.put('/:id',[
     validarCampos
 ],controllerSalones.salonesPut );
 router.post('/', [validarJWT], verificacionDatos,controllerSalones.salonesPost );
-router.delete('/servicios/salones/:id',[
-    validarJWT, tieneRole('ADMINISTRADOR','MODERADOR'),
-    check('id', 'No es un ID válido').isMongoId(),
-    check('id').custom( existeReservaSalonPorId ),
-    validarCampos
-],controllerSalones.salonesDelete );
+router.delete('/:id',
+                [
+                    validarJWT, tieneRole('ADMINISTRADOR','MODERADOR'),
+                    check('id', 'No es un ID válido').isMongoId(),
+                    check('id').custom( existeReservaSalonPorId ),
+                    validarCampos
+                ],
+                controllerSalones.salonesDelete
+            );
 
 
 module.exports = router;

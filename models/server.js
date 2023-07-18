@@ -10,6 +10,8 @@ class Server {
         this.buscar       = '/buscar';
         this.salones      = '/salones';
         this.comida       = '/comida';
+        this.musica       = '/musica';
+        this.bartender    = '/bartender';
         //Conectar a bse de datos
         this.conectarDB();
         //Middlewares
@@ -34,6 +36,8 @@ class Server {
         this.app.use(this.buscar,       require('../routes/buscar'));
         this.app.use(this.salones,      require('../routes/salones.router'));
         this.app.use(this.comida,       require('../routes/comida.router'));
+        this.app.use(this.musica,       require('../routes/musica.router'));
+        this.app.use(this.bartender,    require('../routes/bartender.router'));
     }
     listen() {
         this.app.listen(this.port , ()=>{

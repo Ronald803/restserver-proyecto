@@ -3,7 +3,7 @@ const Salon = require('../models/salon');
 
 
 const salonesGetAll = async (req=request,res=response) => {
-    const salons = await Promise.all([ 
+    const [salons] = await Promise.all([ 
         Salon.find()
     ])
     res.json( salons );

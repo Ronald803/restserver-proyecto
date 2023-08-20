@@ -2,9 +2,7 @@ const { Router }        = require('express');
 const { check }         = require('express-validator');
 const controllerSalones = require('../controllers/salones.controllers')
 const router            = Router();
-
-const {
-    validarCampos, verificacionDatos, validarJWT, tieneRole} =require('../middlewares');
+const {validarCampos, verificacionDatos, validarJWT, tieneRole} =require('../middlewares');
 const { existeReservaSalonPorId } = require('../helpers/db-validators');
 
 
